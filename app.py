@@ -1,10 +1,21 @@
+import pandas as pd
 import streamlit as st
 
-st.set_page_config(page_title="SRS AI 데모", page_icon="📚")
+st.title("📘 오늘의 SRS 카드")
 
-st.title("📚 SRS AI 고정 배포 테스트")
-st.write("이 앱은 Streamlit Cloud에 고정 URL로 배포 가능한 템플릿입니다.")
+# CSV 불러오기
+url = "https://raw.githubusercontent.com/Pkms01/rop-srs-app/main/data/day01.csv"
 
-st.header("🔑 API Key 테스트")
-api_key = st.secrets.get("GEMINI_API_KEY", "API 키가 설정되지 않았습니다.")
-st.code(api_key)
+try:
+    df = pd.read_csv(url)
+
+    for idx, row in df.iterrows():
+        st.markdown(f"### Q{row['id']}. {row['question']}")
+        with st.expander("정답 보기"):
+            st.success(row['answer'])
+        st.caption(f"태그: {row['tag']}")
+        st.markdown("---")
+
+except Exception as e:
+    st.error("카드 불러오기에 실패했습니다. 인터넷 연결 또는 파일 경로를 확인해 주세요.")
+    st.exception(e)
